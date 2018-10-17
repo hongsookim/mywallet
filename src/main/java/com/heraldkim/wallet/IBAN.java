@@ -11,10 +11,7 @@ import static java.lang.Integer.parseInt;
 public class IBAN {
 
 	/**
-	 * 根据官方支持的IBAN规则生成二维码 目前支持的有imtoken kcash
-	 * 参考url
 	 * https://github.com/ethereum/web3.js/blob/develop/lib/web3/iban.js
-	 * 可以防止地址错误（有两位校验和）
 	 */
 	public static void main(String[] args) {
 		getIBAN();

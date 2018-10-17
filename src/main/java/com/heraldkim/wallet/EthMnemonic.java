@@ -17,24 +17,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * 以太坊助记词
- * 用到了比特币的jar包 org.bitcoinj
- */
 public class EthMnemonic {
-	/**
-	 * 通用的以太坊基于bip44协议的助记词路径 （imtoken jaxx Metamask myetherwallet）
-	 */
+
 	private static String ETH_TYPE = "m/44'/60'/0'/0/0";
 
 	private static SecureRandom secureRandom = new SecureRandom();
 
 	public static void main(String[] args) {
-		//生成助记词
 		generateMnemonic(ETH_TYPE, "11111111");
 
-
-		//导入助记词
 		//[team, bid, property, oval, hedgehog, observe, badge, cabin, color, cruel, casino, blame]
 		List<String> list = new ArrayList<>();
 		list.add("team");
@@ -52,19 +43,22 @@ public class EthMnemonic {
 //		importMnemonic(ETH_TYPE, list, "11111111");
 	}
 
+	/**
+	 * genetate mnemonic
+	 * @param path
+	 * @param password
+	 * @return
+	 */
 	public static EthHDWallet generateMnemonic(String path, String password) {
 		if (!path.startsWith("m") && !path.startsWith("M")) {
-			//参数非法
 			return null;
 		}
 		String[] pathArray = path.split("/");
 		if (pathArray.length <= 1) {
-			//内容不对
 			return null;
 		}
 
 		if (password.length() < 8) {
-			//密码过短
 			return null;
 		}
 
@@ -74,18 +68,22 @@ public class EthMnemonic {
 		return createEthWallet(ds, pathArray, password);
 	}
 
+	/**
+	 * import mnemonic
+	 * @param path
+	 * @param list
+	 * @param password
+	 * @return
+	 */
 	private static EthHDWallet importMnemonic(String path, List<String> list, String password) {
 		if (!path.startsWith("m") && !path.startsWith("M")) {
-			//参数非法
 			return null;
 		}
 		String[] pathArray = path.split("/");
 		if (pathArray.length <= 1) {
-			//内容不对
 			return null;
 		}
 		if (password.length() < 8) {
-			//密码过短
 			return null;
 		}
 		String passphrase = "";
@@ -95,32 +93,34 @@ public class EthMnemonic {
 		return createEthWallet(ds, pathArray, password);
 	}
 
+	/**
+	 * create eth wallet
+	 * @param ds
+	 * @param pathArray
+	 * @param password
+	 * @return
+	 */
 	private static EthHDWallet createEthWallet(DeterministicSeed ds, String[] pathArray, String password) {
-		//根私钥
 		byte[] seedBytes = ds.getSeedBytes();
-		System.out.println("根私钥 " + Arrays.toString(seedBytes));
-		//助记词
+		System.out.println("seed " + Arrays.toString(seedBytes));
 		List<String> mnemonic = ds.getMnemonicCode();
-		System.out.println("助记词 " + Arrays.toString(mnemonic.toArray()));
+		System.out.println("mnemonic " + Arrays.toString(mnemonic.toArray()));
 
 		try {
-			//助记词种子
 			byte[] mnemonicSeedBytes = MnemonicCode.INSTANCE.toEntropy(mnemonic);
-			System.out.println("助记词种子 " + Arrays.toString(mnemonicSeedBytes));
+			System.out.println("mnemonic seed " + Arrays.toString(mnemonicSeedBytes));
 			ECKeyPair mnemonicKeyPair = ECKeyPair.create(mnemonicSeedBytes);
 			WalletFile walletFile = Wallet.createLight(password, mnemonicKeyPair);
 			ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
-			//存这个keystore 用完后删除
 			String jsonStr = objectMapper.writeValueAsString(walletFile);
 			System.out.println("mnemonic keystore " + jsonStr);
-			//验证
 			WalletFile checkWalletFile = objectMapper.readValue(jsonStr, WalletFile.class);
 			ECKeyPair ecKeyPair = Wallet.decrypt(password, checkWalletFile);
 			byte[] checkMnemonicSeedBytes = Numeric.hexStringToByteArray(ecKeyPair.getPrivateKey().toString(16));
-			System.out.println("验证助记词种子 "
+			System.out.println("check mnemonic seed "
 					+ Arrays.toString(checkMnemonicSeedBytes));
 			List<String> checkMnemonic = MnemonicCode.INSTANCE.toMnemonic(checkMnemonicSeedBytes);
-			System.out.println("验证助记词 " + Arrays.toString(checkMnemonic.toArray()));
+			System.out.println("check mnemonic " + Arrays.toString(checkMnemonic.toArray()));
 
 		} catch (MnemonicException.MnemonicLengthException | MnemonicException.MnemonicWordException | MnemonicException.MnemonicChecksumException | CipherException | IOException e) {
 			e.printStackTrace();
@@ -175,6 +175,15 @@ public class EthMnemonic {
 		String Address;
 		String keystore;
 
+		/**
+		 * eth wallet
+		 * @param privateKey
+		 * @param publicKey
+		 * @param mnemonic
+		 * @param mnemonicPath
+		 * @param address
+		 * @param keystore
+		 */
 		public EthHDWallet(String privateKey, String publicKey, List<String> mnemonic, String mnemonicPath, String address, String keystore) {
 			this.privateKey = privateKey;
 			this.publicKey = publicKey;

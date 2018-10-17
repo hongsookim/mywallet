@@ -31,10 +31,6 @@ import java.security.NoSuchProviderException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * 冷钱包
- * 账号 交易相关
- */
 public class ColdWallet {
 
 	private static Web3j web3j;
@@ -74,7 +70,7 @@ public class ColdWallet {
 		String to = "0x6c0f49aF552F2326DD851b68832730CB7b6C0DaF".toLowerCase();
 		BigInteger value = Convert.toWei(BigDecimal.valueOf(0.5), Convert.Unit.ETHER).toBigInteger();
 		String data = "";
-		byte chainId = ChainId.ROPSTEN;//测试网络
+		byte chainId = ChainId.ROPSTEN;
 		String privateKey = ColdWallet.privateKey;
 		String signedData;
 		try {
@@ -102,7 +98,7 @@ public class ColdWallet {
 		BigInteger gasPrice = Convert.toWei(BigDecimal.valueOf(3), Convert.Unit.GWEI).toBigInteger();
 		BigInteger gasLimit = BigInteger.valueOf(60000);
 		BigInteger value = BigInteger.ZERO;
-		//token转账参数
+	
 		String methodName = "transfer";
 		List<Type> inputParameters = new ArrayList<>();
 		List<TypeReference<?>> outputParameters = new ArrayList<>();
@@ -129,12 +125,6 @@ public class ColdWallet {
 		}
 	}
 
-
-	/**
-	 * 创建钱包
-	 *
-	 * @param password 密码
-	 */
 	public static void createWallet(String password) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException, CipherException, JsonProcessingException {
 		WalletFile walletFile;
 		ECKeyPair ecKeyPair = Keys.createEcKeyPair();
@@ -145,12 +135,6 @@ public class ColdWallet {
 		System.out.println("keystore json file " + jsonStr);
 	}
 
-	/**
-	 * 解密keystore 得到私钥
-	 *
-	 * @param keystore
-	 * @param password
-	 */
 	public static String decryptWallet(String keystore, String password) {
 		String privateKey = null;
 		ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
@@ -171,9 +155,6 @@ public class ColdWallet {
 		return privateKey;
 	}
 
-	/**
-	 * 签名交易
-	 */
 	public static String signTransaction(BigInteger nonce, BigInteger gasPrice, BigInteger gasLimit, String to,
 										 BigInteger value, String data, byte chainId, String privateKey) throws IOException {
 		byte[] signedMessage;

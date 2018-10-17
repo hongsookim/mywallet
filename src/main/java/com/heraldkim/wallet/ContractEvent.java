@@ -15,19 +15,13 @@ import com.heraldkim.wallet.utils.Environment;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Event log相关
- * 监听合约event
- */
 public class ContractEvent {
 	private static String contractAddress = "0x4c1ae77bc2df45fb68b13fa1b4f000305209b0cb";
 	private static Web3j web3j;
 
 	public static void main(String[] args) {
 		web3j = Web3j.build(new HttpService(Environment.RPC_URL));
-		/**
-		 * 监听ERC20 token 交易
-		 */
+
 		EthFilter filter = new EthFilter(
 				DefaultBlockParameterName.EARLIEST,
 				DefaultBlockParameterName.LATEST,
